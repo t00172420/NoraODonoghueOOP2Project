@@ -6,19 +6,22 @@
 public class DoctorsAppoint {
 	public static void main (String args[]){
 		String [] day = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-	
+		String pName;
+		int pNumber;
+		
 		JList dayList = new JList(day);
 	    JOptionPane.showMessageDialog(null,dayList,"Choose your day", JOptionPane.PLAIN_MESSAGE);
 	   
-	    int dayNum = dayList.getSelectedIndex();	     
-	    JOptionPane.showMessageDialog(null,"Book Appointment for  " + dayList.getSelectedValue());	
-	    	
+	    int dayNum = dayList.getSelectedIndex();	       	
 		String [] time = {"09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00"};
 	
 		JList timeList = new JList(time);
 	    JOptionPane.showMessageDialog(null,timeList,"Choose your time", JOptionPane.PLAIN_MESSAGE);
-	   
-	    int timeNum = timeList.getSelectedIndex();	     
-	    JOptionPane.showMessageDialog(null,"Book Appointment for  " + timeList.getSelectedValue());	
+	    
+	    pName = JOptionPane.showInputDialog("Please enter your name: ");
+	    pNumber = Integer.parseInt(JOptionPane.showInputDialog("Please enter your contact number: "));
+	    int timeNum = timeList.getSelectedIndex();
+	    	     
+	    JOptionPane.showMessageDialog(null,"Book Appointment for " + dayList.getSelectedValue() + " at " + timeList.getSelectedValue());	
 	}
 }
