@@ -1,67 +1,79 @@
-//Appoint.java
-/*This program sets the doctors appointment frame and uses code from the Sample Programs from
- *John Walsh and the bicycle frame program*/
+//AppointmentDoctors.java
+//Nora O'Donoghue
+/*Sample code taken from myBicycleFrame in John Walsh Sample Programs*/
 
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 import java.awt.event.*;
-import java.io.*;  
-/** manages an array of appointments, including saving and loading */
-public class Appoint extends JFrame implements ActionListener{
-    
-     JMenu fileMenu,AppointMenu;
-     Appoint [] appoints; // an array of appointments
-     int count; 
+import java.io.*;
+
+public class AppointmentDoctors extends JFrame implements ActionListener{
+	
+	 private JLabel DoctorLabel;
+	 private JButton ExitButton;
+	 JMenu fileMenu,appointMenu;
+     Appointment [] appoints; // an array of appointments
+     int count;
      
-    // driver 
-    public static void main( String[] args ) {
-        Appoint frame = new Appoint();
-        frame.setVisible(true);
-    }
-    
-    // constructor
-    public Appoint( ) {
+     public static void main( String[] args ) {
+        AppointmentDoctors doc = new AppointmentDoctors();
+        doc.setVisible(true);
+     }   
+        // constructor
+    	public AppointmentDoctors() {
         newSystem();
         //set the frame default properties
-        setTitle     ( "Doctors Appointment system" );
-        setSize      ( 500,300 );
+        setTitle     ( "Book Doctors Appointment");
+        setSize      ( 400,400 );
         setLocation  ( 200,200 );
         Container pane = getContentPane();
-        pane.setBackground(new Color(pink));
+      //  pane.setBackground(Color.pink);
+        pane.setBackground(Color.pink);
         //register 'Exit upon closing' as a default close operation
         setDefaultCloseOperation( EXIT_ON_CLOSE );
-        
+        //creates a JButton on welcome page to exit 
+        /*modified*/
+        ExitButton = new JButton("Exit");
+        ExitButton.addActionListener(this);
+        ExitButton.setVisible(true);
+        pane.add(ExitButton);
+      //creates JLabel on welcome page
+      /*modified*/
+        DoctorLabel = new JLabel("Island Clinic");
+        pane.add(DoctorLabel);
+       
+         
         createFileMenu();
         createAppointMenu();
         //and add them to the menubar
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
         menuBar.add(fileMenu);
-        menuBar.add(AppointMenu);
+        menuBar.add(appointMenu);
      }     
     
       public void newSystem() {
-      	appoints = new Appoint[10];
+      	appoints = new Appointment[10];
       	count = 0;
       }
       
-      /** writes the array of appointments to the file "appoint.dat"
-       */   // NEW
+      // writes the array of appointment to the file "appoints.dat"
+      
       public void save() throws IOException {
       	ObjectOutputStream os;
-      	os = new ObjectOutputStream(new FileOutputStream ("appoint.dat"));
+      	os = new ObjectOutputStream(new FileOutputStream ("appoints.dat"));
       	os.writeObject(appoints);
       	os.close();
       }
       
-      /** loads an array of appointments from the file "appoints.dat"
-       */  // NEW
+      // loads an array of appointments from the file "appoints.dat"
+       
       public void open() {
       	count = 0;
       	try{
       	  ObjectInputStream is;
-      	  is = new ObjectInputStream(new FileInputStream ("appoint.dat"));
-         	appoints  = (Appoint []) is.readObject();
+      	  is = new ObjectInputStream(new FileInputStream ("appoints.dat"));
+         	appoints  = (Appointment []) is.readObject();
       	  is.close(); 
       	}
       	catch(Exception e){
@@ -69,30 +81,33 @@ public class Appoint extends JFrame implements ActionListener{
       		e.printStackTrace();
       	}
       	
-      	// how many valid appointment records?
+      	// how many valid appointments records?
       	while (appoints[count] !=null)
       	   count++;
       } // end open()
       
      
-      public void addAppoint(){
-      	Appoint app = new Appoint();
-      	app.setPName(JOptionPane.showInputDialog("Enter your name: "));
-      	Appoint[count] = app;
-      	// set the attributes: ask the user for patient name etc
+      public void addAppointment(){
+      	Appointment temp = new Appointment();
+      	temp.setDName(JOptionPane.showInputDialog("Which doctor do you wish to book appointment with?"));
+      	temp.setDate(Integer.parseInt(JOptionPane.showInputDialog("What date?")));
+      	temp.setTime(Integer.parseInt(JOptionPane.showInputDialog("What time?")));
+      	appoints[count] = temp; // 'default appointment
+      	// set the attributes: ask the user for doctor name etc
       	count++; // now there is one more appointment in the system
       }
+ 
       
       public void display(){
       	JTextArea area = new JTextArea();
       	if (count>0) {
-      	  area.setText("Appointment List: needs better output formatting\n\n");
+      	  area.setText("Appointment List: \n\n");
       	  for (int i = 0; i<count; i++) // loop over existing appointments, rather than array size
       	    area.append("Appointment no: " + i + " " +appoints[i].toString()+"\n");
       	  showMessage(area);
       	}
       	else
-      	    showMessage("No Appointments in the system");
+      	    showMessage("No appointments in the system");
       } // end display
       
       public void actionPerformed (ActionEvent e) {
@@ -100,11 +115,14 @@ public class Appoint extends JFrame implements ActionListener{
       	 showMessage("Shutting down the system");
       	 System.exit(0);
       	}
-      	else if (e.getActionCommand() .equals ("Add")){
-      	   addAppoint(); // branch to a separate method
+      	else if (e.getActionCommand() .equals ("Book Appointment")){
+      	   addAppointment(); // branch to a separate method
       	}
       	else if (e.getActionCommand() .equals ("Display")){
            display();
+      	}
+      	else if (e.getActionCommand() .equals("Exit")){
+      		System.exit(0);
       	}
       	else if (e.getActionCommand() .equals ("New File")){
       		newSystem();
@@ -151,19 +169,19 @@ public class Appoint extends JFrame implements ActionListener{
       	fileMenu.add(item);
       }
       
-      private void createBikeMenu(){
+      private void createAppointMenu(){
       	// create the menu
-      	AppointMenu = new JMenu("Appointment");
+      	appointMenu = new JMenu("Appointment");
       	// declare a menu item (re-usable)
       	JMenuItem item;
       	
-      	item = new JMenuItem("Add");
+      	item = new JMenuItem("Book Appointment");
       	item.addActionListener(this);
-      	AppointMenu.add(item);
-      	
+      	appointMenu.add(item);
+      	      	
       	item = new JMenuItem("Display");
       	item.addActionListener(this);
-      	AppointMenu.add(item);
+      	appointMenu.add(item);
       }
        /** utility methods to make the code simpler */
       public void showMessage (String s){
@@ -172,5 +190,7 @@ public class Appoint extends JFrame implements ActionListener{
       
       public void showMessage (JTextArea s){
       	JOptionPane.showMessageDialog(null,s);
-      }
+      
+    }
 }
+
